@@ -11,7 +11,7 @@
 
     - name: Run the equivalent of "apt-get update" as a separate step
       apt:
-        update_cache: yes
+        update_cache: true
       when: ansible_facts.os_family == 'Debian'
     - name: install required tools on debian
       apt:
@@ -24,8 +24,16 @@
           - findutils
           - procps-ng
       when: ansible_facts.distribution == 'Fedora'
+    - name: install required tools on SuSE
+      shell: "zypper -n install python-xml"
+      when: ansible_facts.os_family == 'Suse'
+    - name: install required tools on arch
+      pacman:
+        name: awk
+      when: ansible_facts.os_family == 'Archlinux'
     - name: create recursing symlink to test minimize access
       shell: "rm -f /usr/bin/zzz && ln -s /usr/bin /usr/bin/zzz"
+
   vars:
     os_security_users_allow: change_user
     os_security_kernel_enable_core_dump: true
@@ -87,7 +95,7 @@
 
     - name: Run the equivalent of "apt-get update" as a separate step
       apt:
-        update_cache: yes
+        update_cache: true
       when: ansible_facts.os_family == 'Debian'
   roles:
     - ansible-os-hardening
